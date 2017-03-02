@@ -1,7 +1,5 @@
 package FirstTask;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -19,12 +17,16 @@ public final class Natural {
 
     //конструктор (из числа)
     public Natural(int num) {
-        this.array = Integer.toString(num).chars().map(c -> c -= '0').toArray();
+        this(Integer.toString(num));
     }
 
     //конструктор (из массива)
     private Natural(int[] array) {
         this.array = array;
+    }
+
+    private Natural(ArrayList list) {
+        //
     }
 
     //equals
@@ -37,48 +39,19 @@ public final class Natural {
     }
 
     //less
-    public boolean less(Object obj) {
-        if (obj instanceof Natural) {
-            Natural other = (Natural) obj;
-            return Arrays.hashCode(array) < Arrays.hashCode(other.array);
-        }
-        return false;
+    public boolean less(Natural other) {
+        return Arrays.hashCode(array) < Arrays.hashCode(other.array);
     }
 
     //more
-    public boolean more(Object obj) {
-        if (obj instanceof Natural) {
-            Natural other = (Natural) obj;
-            return Arrays.hashCode(array) > Arrays.hashCode(other.array);
-        }
-        return false;
+    public boolean more(Natural other) {
+        return Arrays.hashCode(array) > Arrays.hashCode(other.array);
     }
 
     //plus
-    Natural plus(Natural other) {
-        ArrayList<Integer> result = new ArrayList();
-        ArrayList a = new ArrayList();
-        ArrayList b = new ArrayList();
-        if (this.array.length > other.array.length) {
-            for (int el : this.array) a.add(el);
-            for (int el : other.array) b.add(el);
-        } else {
-            for (int el : this.array) b.add(el);
-            for (int el : other.array) a.add(el);
-        }
-        int aLen = a.size();
-        int bLen = b.size();
-        System.out.println(aLen + " " + bLen);
-        int iterator = 1;
-        while (b.size() != 0) {
-            int temp = Integer.parseInt(a.get(aLen - iterator).toString()) +
-                    Integer.parseInt(b.get(bLen - iterator).toString());
-            result.add(bLen - iterator, temp);
-            b.remove(bLen - iterator);
-            System.out.println(iterator);
-        }
-        String res = result.toString().replace("[", "").replace("]", "");
-        return new Natural(res);
+    public Natural plus(Natural other) {
+        ArrayList<Integer> result = new ArrayList<>();
+        return new Natural(result);
     }
 
     //minus
@@ -91,7 +64,7 @@ public final class Natural {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(array) * 2;
+        return Arrays.hashCode(array);
     }
 
     @Override
@@ -104,11 +77,10 @@ public final class Natural {
     }
 
     public static void main(String[] args) {
-        Natural b1 = new Natural("121");
-        Natural b2 = new Natural("56");
+        Natural b1 = new Natural("1234");
+        Natural b2 = new Natural("5");
         System.out.println(b1);
         System.out.println(b2);
-        System.out.println(b1.equals(b2));
         System.out.println(b1.plus(b2));
     }
 }
