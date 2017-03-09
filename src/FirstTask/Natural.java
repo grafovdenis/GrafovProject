@@ -2,6 +2,7 @@ package FirstTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public final class Natural {
 
@@ -26,7 +27,7 @@ public final class Natural {
     }
 
     private Natural(ArrayList list) {
-        //
+        this.array = list.stream().mapToInt(i -> (int) i).toArray();
     }
 
     //equals
@@ -40,17 +41,68 @@ public final class Natural {
 
     //less
     public boolean less(Natural other) {
-        return Arrays.hashCode(array) < Arrays.hashCode(other.array);
+        if (array.length > other.array.length) {
+            return false;
+        } else if (array.length < other.array.length) {
+            return true;
+        }
+        int i = 0;
+        while (this.array[i] == other.array[i]) i++;
+        return (this.array[i] < other.array[i]);
     }
 
     //more
     public boolean more(Natural other) {
-        return Arrays.hashCode(array) > Arrays.hashCode(other.array);
+        return (!equals(other) && !less(other));
     }
 
     //plus
     public Natural plus(Natural other) {
         ArrayList<Integer> result = new ArrayList<>();
+        int maxL = Math.max(array.length, other.array.length);
+        int minL = Math.min(array.length, other.array.length);
+        int delta = maxL - minL;
+        ArrayList<Integer> a = new ArrayList<>();
+        ArrayList<Integer> b = new ArrayList<>();
+        if (minL == array.length) {
+            for (int el : other.array) {
+                a.add(el);
+            }
+            for (int i = 0; i < delta; i++) {
+                b.add(0);
+            }
+            for (int el : array) {
+                b.add(el);
+            }
+        } else if (maxL == array.length) {
+            for (int el : array) {
+                a.add(el);
+            }
+            for (int i = 0; i < delta; i++) {
+                b.add(0);
+            }
+            for (int el : other.array) {
+                b.add(el);
+            }
+        }
+        for (int i = 0; i < maxL; i++) {
+            int temp = a.get(maxL - 1 - i) + b.get(maxL - i - 1);
+            result.add(i, temp);
+        }
+        for (int i = 0; i < result.size() - 1; i++) {
+            if (result.get(i) >= 10) {
+                int temp = result.get(i) % 10;
+                result.remove(i);
+                result.add(i, temp);
+                temp = result.get(i + 1) + 1;
+                result.remove(i + 1);
+                result.add(i + 1, temp);
+            }
+        }
+        Collections.reverse(result);
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(result);
         return new Natural(result);
     }
 
@@ -77,10 +129,12 @@ public final class Natural {
     }
 
     public static void main(String[] args) {
-        Natural b1 = new Natural("1234");
-        Natural b2 = new Natural("5");
+        Natural b1 = new Natural("345671");
+        Natural b2 = new Natural("354671");
         System.out.println(b1);
         System.out.println(b2);
         System.out.println(b1.plus(b2));
+        System.out.println(b1.more(b2));
+        System.out.println(b1.less(b2));
     }
 }
