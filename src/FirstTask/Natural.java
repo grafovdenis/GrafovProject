@@ -8,6 +8,16 @@ public final class Natural {
 
     private int[] array;
 
+    private int pow(int x, int y) {
+        int result = x;
+        if (y != 0) {
+            for (int i = 2; i < y; i++) {
+                result *= x;
+            }
+        } else result = 1;
+        return result;
+    }
+
     //конструктор (строковый)
     public Natural(String str) {
         if (str.length() == 0) throw new NumberFormatException("Zero-length argument");
@@ -23,7 +33,19 @@ public final class Natural {
 
     //конструктор (из массива)
     private Natural(int[] array) {
-        this.array = array;
+        int zeroCount = 0;
+        boolean zero = true;
+        for(int digit : array) {
+                        if(zero) {
+                if (digit != 0) {
+                    zero = false;
+                }
+                else {
+                    zeroCount ++;
+                }
+            }
+        }
+        this.array = Arrays.copyOfRange(array, zeroCount, array.length);
     }
 
     private Natural(ArrayList list) {
@@ -39,21 +61,29 @@ public final class Natural {
         return Arrays.equals(this.array, other.array);
     }
 
-    //less
-    public boolean less(Natural other) {
-        if (array.length >= other.array.length) {
-            return false;
-        } else if (array.length < other.array.length) {
-            return true;
-        }
-        int i = 0;
-        while (this.array[i] == other.array[i]) i++;
-        return (this.array[i] < other.array[i]);
-    }
-
     //more
     public boolean more(Natural other) {
-        return (!equals(other) && !less(other));
+        if (array.length < other.array.length) {
+            return false;
+        } else if (array.length > other.array.length) {
+            return true;
+        }
+        boolean result = false;
+        int i = 0;
+        while (this.array[i] == other.array[i]) i++;
+        return (this.array[i] > other.array[i]);
+    }
+
+    //less
+    public boolean less(Natural other) {
+        return (!more(other) && !equals(other));
+    }
+
+    //deleteZeros
+    private Natural deleteZeros() {
+        if (array[0] == 0 && array.length > 1) {
+            return new Natural(0);
+        } else return new Natural(array);
     }
 
     //plus
@@ -100,19 +130,21 @@ public final class Natural {
             }
         }
         Collections.reverse(result);
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(result);
+        if (result.get(0) >= 10) {
+            int temp = result.get(0);
+            result.remove(0);
+            result.add(0, temp % 10);
+            result.add(0, temp / 10);
+        }
         return new Natural(result);
     }
-
-    //deleteZeros
 
     //minus
     public Natural minus(Natural other) {
         ArrayList<Integer> a = new ArrayList<>();
         ArrayList<Integer> b = new ArrayList<>();
         ArrayList<Integer> result = new ArrayList<>();
+        if (Arrays.equals(array,other.array)) return new Natural(0);
         for (int el : array) {
             a.add(el);
         }
@@ -137,14 +169,47 @@ public final class Natural {
             }
         }
         Collections.reverse(result);
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(result);
+        return new Natural(result).deleteZeros();
+    }
+
+    //multiply
+    public Natural multiply(Natural other) {
+        int[] a;
+        int[] b;
+        if (array.length > other.array.length) {
+            a = array;
+            b = other.array;
+        } else {
+            b = array;
+            a = other.array;
+        }
+        int[] result = new int[a.length + b.length];
+        int len = result.length;
+        int k = 0;
+        for (int i = b.length - 1; i >= 0; i--) {
+            for (int j = a.length - 1; j >= 0; j--) {
+                ++k;
+                int temp = a[j] * b[i];
+                result[len - k] += temp;
+            }
+            len--;
+            k = 0;
+        }
+        for (int i = result.length - 1; i > 0; i--) {
+            if (result[i] >= 10) {
+                result[i - 1] += result[i] / 10;
+                result[i] %= 10;
+            }
+        }
+        if (result[0] == 0) {
+            int[] res = new int[result.length - 1];
+            System.arraycopy(result, 1, res, 0, result.length - 1);
+            return new Natural(res);
+        }
         return new Natural(result);
     }
-    //multiply
 
-    //divide
+    //div
 
     //mod
 
@@ -160,15 +225,5 @@ public final class Natural {
             sb.append(i);
         }
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        Natural b1 = new Natural("132");
-        Natural b2 = new Natural("132");
-        System.out.println(b1);
-        System.out.println(b2);
-        System.out.println(b1.minus(b2));
-        System.out.println(b1.more(b2));
-        System.out.println(b1.less(b2));
     }
 }
