@@ -8,7 +8,8 @@ import static org.junit.Assert.*;
 
 public class NaturalTest {
     @Test
-    public void plus() throws Exception {
+    public void plus() {
+        assertEquals(new Natural(0), new Natural(0).plus(new Natural("0")));
         assertEquals(new Natural(1), new Natural(1).plus(new Natural("0")));
         assertEquals(new Natural(3), new Natural(1).plus(new Natural("2")));
         assertEquals(new Natural(198), new Natural(99).plus(new Natural("99")));
@@ -16,36 +17,33 @@ public class NaturalTest {
     }
 
     @Test
-    public void minus() throws Exception {
-        assertEquals(new Natural(0),new Natural(1).minus(new Natural("1")));
-        assertEquals(new Natural(99),new Natural(99).minus(new Natural("0")));
-        assertEquals(new Natural(900),new Natural(999).minus(new Natural("99")));
-        assertEquals(new Natural(0),new Natural(10000).minus(new Natural("10000")));
-        assertEquals(new Natural(999000000),new Natural(999999999).minus(new Natural("999999")));
+    public void minus() {
+        assertEquals(new Natural(0), new Natural(0).minus(new Natural("0")));
+        assertEquals(new Natural(0), new Natural(1).minus(new Natural("1")));
+        assertEquals(new Natural(99), new Natural(99).minus(new Natural("0")));
+        assertEquals(new Natural(900), new Natural(999).minus(new Natural("99")));
+        assertEquals(new Natural(0), new Natural(10000).minus(new Natural("10000")));
+        assertEquals(new Natural(999000000), new Natural(999999999).minus(new Natural("999999")));
     }
 
     @Test
-    public void equals() throws Exception {
+    public void equals() {
         assertEquals(new Natural("1"), new Natural(1));
         assertEquals(new Natural("1"), new Natural(1));
         assertEquals(new Natural(999999999), new Natural("999999999"));
     }
 
     @Test
-    public void more() throws Exception {
-        assertTrue(new Natural("2").more(new Natural(1)));
-        assertTrue(new Natural("198").more(new Natural(99)));
-        assertTrue(new Natural("9999999999999999999999999999999999999999").more(new Natural("9999999999999999999899999999999999999999")));
-        assertTrue(new Natural("1891").more(new Natural("991")));
+    public void compareTo() {
+        assertEquals(1, new Natural(2).compareTo(new Natural(1)));
+        assertEquals(-1, new Natural(1).compareTo(new Natural(2)));
+        assertEquals(0, new Natural(2).compareTo(new Natural(2)));
+        assertEquals(1, new Natural(999999999).compareTo(new Natural(999189990)));
+        assertEquals(-1, new Natural(99999999).compareTo(new Natural(999189999)));
+        assertEquals(1, new Natural("9999999999999999999999999999999999999999").compareTo
+                (new Natural("9999999999999999999899999999999999999999")));
     }
 
-    @Test
-    public void less() throws Exception {
-        assertTrue(new Natural("1").less(new Natural(2)));
-        assertTrue(new Natural("10").less(new Natural(19)));
-        assertTrue(new Natural("1").less(new Natural(2)));
-        assertFalse(new Natural("9999999999999999999999999999999999999999").less(new Natural("9999999999999999991899999999999999999999")));
-    }
     @Test
     public void multiply() {
         assertEquals(new Natural(0), new Natural(1).multiply(new Natural("0")));
