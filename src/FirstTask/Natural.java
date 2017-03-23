@@ -1,5 +1,7 @@
 package FirstTask;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -224,36 +226,49 @@ public final class Natural {
             String a = this.toString();
             String b = other.toString();
             Natural B = other;
-            Natural Rest = other;
+            Natural Rest = new Natural(0);
             Natural x = other;
             int i = 0;
-            while (Rest.compareTo(new Natural(0)) != -1) {
+            while (Rest.compareTo(new Natural(0)) >= 0) {
+                System.out.println(i + " <- i");
                 int splitter = 1;
-                String a1 = a.substring(0, splitter);
+                String a1 = "";
+                if (Rest.compareTo(new Natural(0)) != 0)
+                    a1 = Rest.toString() + a.substring(0, splitter);
+                else
+                    a1 = a.substring(0, splitter);
                 B = new Natural(b);
                 while (B.compareTo(new Natural(a1)) != -1 && splitter <= a.length()) {
-                    a1 = a.substring(0, splitter);
                     splitter++;
+                    a1 = a.substring(0, splitter);
                 }
                 Natural A1 = new Natural(a1);
                 System.out.println("\n" + A1 + " <- A1");
-                int C = 1;
-                Natural composition = B;
-                while (composition.compareTo(A1) == -1 || composition.compareTo(A1) == 0) {
-                    C++;
-                    composition = B.multiply(new Natural(C));
-                    if (composition.compareTo(A1) == 0) break;
+
+                int C = 0;
+                Natural composition = B.multiply(new Natural(C));
+                if (composition.compareTo(A1) == -1) {
+                    while (composition.compareTo(A1) == -1) {
+                        C++;
+                        composition = B.multiply(new Natural(C));
+                        if (composition.compareTo(A1) == 1) {
+                            C--;
+                            composition = B.multiply(new Natural(C));
+                            break;
+                        }
+                    }
                 }
+                System.out.println(C + " <- C");
                 result.add(C);
                 System.out.println(composition + " <- composition");
-                if (composition.array.length == other.array.length) {
-                    b = b.substring(composition.array.length + i, other.array.length);
-                } else
-                    b = b.substring(composition.array.length - 1 + i, other.array.length);
-                System.out.println(b.length() + " <- bLen");
-                if (b.length() == 0) break;
+                a = a.substring(composition.array.length, a.length());
+                System.out.println(a.length() + " <- aLen");
+                if (a.length() == 0) break;
                 x = new Natural(b);
-                Rest = new Natural(b).minus(composition);
+                Rest = A1.minus(composition);
+                System.out.println(Rest + " <- Rest");
+                if (Rest.compareTo(new Natural(ZERO)) != 0) a += this.array[this.array.length - 1];
+                i++;
             }
             return new Natural(result);
         }
@@ -276,9 +291,9 @@ public final class Natural {
     }
 
     public static void main(String[] args) {
-        Natural n1 = new Natural("666");
+        Natural n1 = new Natural("9999");
         Natural n2 = new Natural(6);
-        Natural n3 = new Natural(11);
+        Natural n3 = new Natural(12);
         System.out.println(n1.div(n2));
         System.out.println(n1.div(n3));
     }
