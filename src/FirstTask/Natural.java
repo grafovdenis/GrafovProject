@@ -213,7 +213,51 @@ public final class Natural {
         return new Natural(result);
     }
 
-    //div
+    //div (доделать)
+    public Natural div(Natural other) {
+        if (other.equals(new Natural(0))) throw new IllegalArgumentException();
+        else if (this.equals(new Natural(0))) return new Natural("0");
+        else if (other.equals(new Natural(1))) return this;
+        else if (this.equals(other)) return new Natural(1);
+        else {
+            ArrayList<Integer> result = new ArrayList<>();
+            String a = this.toString();
+            String b = other.toString();
+            Natural B = other;
+            Natural Rest = other;
+            Natural x = other;
+            int i = 0;
+            while (Rest.compareTo(new Natural(0)) != -1) {
+                int splitter = 1;
+                String a1 = a.substring(0, splitter);
+                B = new Natural(b);
+                while (B.compareTo(new Natural(a1)) != -1 && splitter <= a.length()) {
+                    a1 = a.substring(0, splitter);
+                    splitter++;
+                }
+                Natural A1 = new Natural(a1);
+                System.out.println("\n" + A1 + " <- A1");
+                int C = 1;
+                Natural composition = B;
+                while (composition.compareTo(A1) == -1 || composition.compareTo(A1) == 0) {
+                    C++;
+                    composition = B.multiply(new Natural(C));
+                    if (composition.compareTo(A1) == 0) break;
+                }
+                result.add(C);
+                System.out.println(composition + " <- composition");
+                if (composition.array.length == other.array.length) {
+                    b = b.substring(composition.array.length + i, other.array.length);
+                } else
+                    b = b.substring(composition.array.length - 1 + i, other.array.length);
+                System.out.println(b.length() + " <- bLen");
+                if (b.length() == 0) break;
+                x = new Natural(b);
+                Rest = new Natural(b).minus(composition);
+            }
+            return new Natural(result);
+        }
+    }
 
     //mod
 
@@ -229,5 +273,13 @@ public final class Natural {
             sb.append(i);
         }
         return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        Natural n1 = new Natural("666");
+        Natural n2 = new Natural(6);
+        Natural n3 = new Natural(11);
+        System.out.println(n1.div(n2));
+        System.out.println(n1.div(n3));
     }
 }
