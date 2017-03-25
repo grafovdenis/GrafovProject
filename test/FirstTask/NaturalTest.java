@@ -25,6 +25,7 @@ public class NaturalTest {
         assertEquals(new Natural(0), new Natural(10000).minus(new Natural("10000")));
         assertEquals(new Natural(999000000), new Natural(999999999).minus(new Natural("999999")));
         assertEquals(new Natural(105),new Natural(110).minus(new Natural(5)));
+        assertEquals(new Natural(109),new Natural(110).minus(new Natural(1)));
     }
 
     @Test
@@ -64,5 +65,15 @@ public class NaturalTest {
                 .div(new Natural("6")));
         assertEquals(new Natural(833333),new Natural("9999999")
                 .div(new Natural("12")));
+        assertEquals(new Natural(25),new Natural("51")
+                .div(new Natural("2")));
+    }
+    @Test
+    public void mod() {
+        assertEquals(new Natural(0),new Natural(1).mod(new Natural(1)));
+        assertEquals(new Natural(3),new Natural(9999).mod(new Natural(6)));
+        assertEquals(new Natural(5),new Natural(15).mod(new Natural(10)));
+        assertEquals(new Natural(2),new Natural(22).mod(new Natural(5)));
+        assertEquals(new Natural(3),new Natural("9999999").mod(new Natural(12)));
     }
 }
