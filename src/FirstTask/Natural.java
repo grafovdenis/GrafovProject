@@ -10,7 +10,6 @@ public final class Natural implements Comparable<Natural> {
 
     private static int[] ZERO = {0};
 
-    //конструктор (строковый)
     public Natural(String str) {
         if (str.equals("0")) this.array = ZERO;
         else if (str.length() == 0) throw new NumberFormatException("Zero-length argument");
@@ -30,12 +29,10 @@ public final class Natural implements Comparable<Natural> {
         } else throw new NumberFormatException("Not a number");
     }
 
-    //конструктор (из числа)
     public Natural(int num) {
         this(Integer.toString(num));
     }
 
-    //конструктор (из массива)
     private Natural(int[] array) {
         if (Arrays.equals(array, ZERO)) this.array = ZERO;
         else {
@@ -58,35 +55,6 @@ public final class Natural implements Comparable<Natural> {
         this(list.stream().mapToInt(i -> (int) i).toArray());
     }
 
-    //equals
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Natural other = (Natural) obj;
-        return Arrays.equals(this.array, other.array);
-    }
-
-    //compareTo
-    public int compareTo(Natural other) {
-        if (array.length > other.array.length) {
-            return 1;
-        } else if (array.length < other.array.length) {
-            return -1;
-        } else {
-            int i = 0;
-            while (this.array[i] == other.array[i]) {
-                i++;
-                if (i == array.length) {
-                    return 0;
-                }
-            }
-            if (this.array[i] > other.array[i]) return 1;
-            else return -1;
-        }
-    }
-
-    //plus
     public Natural plus(Natural other) {
         if (array == ZERO) return other;
         if (other.array == ZERO) return this;
@@ -119,7 +87,6 @@ public final class Natural implements Comparable<Natural> {
         return new Natural(res);
     }
 
-    //minus
     public Natural minus(Natural other) {
         if (other.compareTo(this) == 1) throw new IllegalArgumentException("Sorry :C");
         if (other.array == ZERO) return this;
@@ -143,7 +110,6 @@ public final class Natural implements Comparable<Natural> {
         return new Natural(res);
     }
 
-    //multiply
     public Natural multiply(Natural other) {
         if (Arrays.equals(this.array, ZERO) || Arrays.equals(other.array, ZERO)) {
             return new Natural(ZERO);
@@ -178,6 +144,14 @@ public final class Natural implements Comparable<Natural> {
         return new Natural(result);
     }
 
+    /*
+    1) Выбираем из A слева столько цифр, сколько их в B. Получаем число A1.
+    2) Если А1 меньше чем B, то прибавляем в него еще одну цифру из А.
+    3) Перебором всех цифр С находим самую большую, при которой "элементарное произведение" C*B <= A1.
+    4) Записываем цифру С в результат.
+    5) Вычитаем СЛЕВА из A "элементарное произведение" C*B.
+    6) Если A >= B Повторяем (1), иначе деление закончено и A - остаток от деления.
+     */
     private Natural divMod(Natural other, boolean callDiv) {
         if (other.equals(new Natural(0))) throw new IllegalArgumentException();
         else if (this.equals(new Natural(0))) return new Natural("0");
@@ -198,18 +172,11 @@ public final class Natural implements Comparable<Natural> {
                     splitter++;
                 }
                 Natural A1 = new Natural(a1);
-                int C = 0;
+                int C = 9;
                 Natural composition = b.multiply(new Natural(C));
-                if (composition.compareTo(A1) == -1) {
-                    while (composition.compareTo(A1) == -1) {
-                        C++;
-                        composition = b.multiply(new Natural(C));
-                        if (composition.compareTo(A1) == 1) {
-                            C--;
-                            composition = b.multiply(new Natural(C));
-                            break;
-                        }
-                    }
+                while (composition.compareTo(A1) == 1) {
+                    C--;
+                    composition = b.multiply(new Natural(C));
                 }
                 result.add(C);
                 rest = A1.minus(composition);
@@ -222,14 +189,38 @@ public final class Natural implements Comparable<Natural> {
         }
     }
 
-    //div
     public Natural div(Natural other) {
         return this.divMod(other, true);
     }
 
-    //mod
     public Natural mod(Natural other) {
         return this.divMod(other, false);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Natural other = (Natural) obj;
+        return Arrays.equals(this.array, other.array);
+    }
+
+    public int compareTo(Natural other) {
+        if (array.length > other.array.length) {
+            return 1;
+        } else if (array.length < other.array.length) {
+            return -1;
+        } else {
+            int i = 0;
+            while (this.array[i] == other.array[i]) {
+                i++;
+                if (i == array.length) {
+                    return 0;
+                }
+            }
+            if (this.array[i] > other.array[i]) return 1;
+            else return -1;
+        }
     }
 
     @Override
