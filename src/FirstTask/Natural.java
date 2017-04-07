@@ -172,13 +172,23 @@ public final class Natural implements Comparable<Natural> {
                     splitter++;
                 }
                 Natural A1 = new Natural(a1);
-                int C = 9;
+                int C = 0;
                 Natural composition = b.multiply(new Natural(C));
-                while (composition.compareTo(A1) == 1) {
-                    C--;
-                    composition = b.multiply(new Natural(C));
+                if (composition.compareTo(A1) == -1) {
+                    while (composition.compareTo(A1) == -1) {
+                        C++;
+                        composition = b.multiply(new Natural(C));
+                        if (composition.compareTo(A1) == 1) {
+                            C--;
+                            composition = b.multiply(new Natural(C));
+                            break;
+                        }
+                    }
                 }
-                result.add(C);
+                if (C >= 10) {
+                    result.add(C / 10);
+                    result.add(C % 10);
+                } else result.add(C);
                 rest = A1.minus(composition);
                 a = a.substring(composition.array.length, a.length());
                 if (a.length() == 0) break;

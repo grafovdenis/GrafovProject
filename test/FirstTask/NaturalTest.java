@@ -55,6 +55,8 @@ public class NaturalTest {
     }
     @Test
     public void div() {
+        assertEquals(new Natural(101),new Natural("9999")
+                .div(new Natural("99")));
         assertEquals(new Natural(1),new Natural("99999999999999999")
                 .div(new Natural("99999999999999999")));
         assertEquals(new Natural(1666),new Natural("9999")
