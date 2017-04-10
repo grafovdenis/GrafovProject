@@ -55,8 +55,6 @@ public class NaturalTest {
     }
     @Test
     public void div() {
-        assertEquals(new Natural(101),new Natural("9999")
-                .div(new Natural("99")));
         assertEquals(new Natural(1),new Natural("99999999999999999")
                 .div(new Natural("99999999999999999")));
         assertEquals(new Natural(1666),new Natural("9999")
@@ -69,6 +67,16 @@ public class NaturalTest {
                 .div(new Natural("12")));
         assertEquals(new Natural(25),new Natural("51")
                 .div(new Natural("2")));
+        assertEquals(new Natural(101),new Natural("9999")
+                .div(new Natural("99")));
+        assertEquals(new Natural(990099 / 99), new Natural(990099)
+                .div(new Natural(99)));
+        assertEquals(new Natural(2460/6),new Natural("2460")
+                .div(new Natural("6")));
+        assertEquals(new Natural(24600/6),new Natural("24600")
+                .div(new Natural("6")));
+        assertEquals(new Natural(204600/6),new Natural("204600")
+                .div(new Natural("6")));
     }
     @Test
     public void mod() {

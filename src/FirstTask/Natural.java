@@ -146,7 +146,7 @@ public final class Natural implements Comparable<Natural> {
 
     /*
     1) Выбираем из A слева столько цифр, сколько их в B. Получаем число A1.
-    2) Если А1 меньше чем B, то прибавляем в него еще одну цифру из А.
+    2) Если А1 < B, то прибавляем в него еще одну цифру из А.
     3) Перебором всех цифр С находим самую большую, при которой "элементарное произведение" C*B <= A1.
     4) Записываем цифру С в результат.
     5) Вычитаем СЛЕВА из A "элементарное произведение" C*B.
@@ -157,42 +157,41 @@ public final class Natural implements Comparable<Natural> {
         else if (this.equals(new Natural(0))) return new Natural("0");
         else {
             ArrayList<Integer> result = new ArrayList<>();
-            String a = this.toString();
+            ArrayList<Integer> a = new ArrayList<>();
+            for (int el : this.array) {
+                a.add(el);
+            }
             Natural b = other;
             Natural rest = new Natural(0);
             while (rest.compareTo(new Natural(0)) >= 0) {
-                int splitter = 1;
-                String a1;
-                if (rest.compareTo(new Natural(0)) != 0)
-                    a1 = rest.toString() + a.substring(0, splitter);
-                else
-                    a1 = a.substring(0, splitter);
-                while (b.compareTo(new Natural(a1)) != -1 && splitter <= a.length()) {
-                    a1 = a.substring(0, splitter);
-                    splitter++;
+                int i = 0;
+                ArrayList<Integer> a1 = new ArrayList<>();
+                if (rest.compareTo(new Natural(0)) != 0) {
+                    a1.add(Integer.parseInt(rest.toString()));
+                }
+                while (new Natural(a1).compareTo(b) < 0) {
+                    if (a.size() == 0) break;
+                    a1.add(a.get(0));
+                    a.remove(0);
+                    i++;
+                    if (i > 1) result.add(0);
                 }
                 Natural A1 = new Natural(a1);
-                int C = 0;
+                int C = 9;
                 Natural composition = b.multiply(new Natural(C));
-                if (composition.compareTo(A1) == -1) {
-                    while (composition.compareTo(A1) == -1) {
-                        C++;
-                        composition = b.multiply(new Natural(C));
-                        if (composition.compareTo(A1) == 1) {
-                            C--;
-                            composition = b.multiply(new Natural(C));
-                            break;
-                        }
-                    }
+                while (composition.compareTo(A1) == 1 && C > 0) {
+                    C--;
+                    composition = b.multiply(new Natural(C));
                 }
                 if (C >= 10) {
                     result.add(C / 10);
                     result.add(C % 10);
                 } else result.add(C);
-                rest = A1.minus(composition);
-                a = a.substring(composition.array.length, a.length());
-                if (a.length() == 0) break;
-                if (rest.compareTo(new Natural(ZERO)) != 0) a += this.array[this.array.length - 1];
+                if (composition.compareTo(new Natural(0)) == 0) {
+                    rest = A1;
+                } else
+                    rest = A1.minus(composition);
+                if (a.size() == 0) break;
             }
             if (callDiv) return new Natural(result);
             else return rest;
