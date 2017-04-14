@@ -3,6 +3,7 @@ package FirstTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public final class Natural implements Comparable<Natural> {
 
@@ -163,17 +164,23 @@ public final class Natural implements Comparable<Natural> {
             }
             Natural b = other;
             Natural rest = new Natural(0);
-            while (rest.compareTo(new Natural(0)) >= 0) {
+            int index = 0;
+            main_cycle:
+            while (index != a.size()) {
                 int i = 0;
                 ArrayList<Integer> a1 = new ArrayList<>();
                 if (rest.compareTo(new Natural(0)) != 0) {
-                    a1.add(Integer.parseInt(rest.toString()));
+                    a1.addAll(Arrays.stream(rest.array).boxed().collect(Collectors.toSet()));
                 }
                 while (new Natural(a1).compareTo(b) < 0) {
-                    if (a.size() == 0) break;
-                    a1.add(a.get(0));
-                    a.remove(0);
+                    if (a.size() == index) {
+                        result.add(0);
+                        rest = new Natural(a1);
+                        break main_cycle;
+                    }
+                    a1.add(a.get(index));
                     i++;
+                    index++;
                     if (i > 1) result.add(0);
                 }
                 Natural A1 = new Natural(a1);
@@ -183,15 +190,11 @@ public final class Natural implements Comparable<Natural> {
                     C--;
                     composition = b.multiply(new Natural(C));
                 }
-                if (C >= 10) {
-                    result.add(C / 10);
-                    result.add(C % 10);
-                } else result.add(C);
+                result.add(C);
                 if (composition.compareTo(new Natural(0)) == 0) {
                     rest = A1;
                 } else
                     rest = A1.minus(composition);
-                if (a.size() == 0) break;
             }
             if (callDiv) return new Natural(result);
             else return rest;
